@@ -62,6 +62,7 @@ import {
 } from '../services/hintService';
 import { HintLadder } from './HintLadder';
 import { ActiveHintsDrawer } from './ActiveHintsDrawer';
+import { PitchDemoBar } from './PitchDemoBar';
 
 interface ChallengePageProps {
   concept: Concept;
@@ -511,12 +512,49 @@ export const ChallengePage: React.FC<ChallengePageProps> = ({
 
   // Reset to attempt again
   const handleMakeAnotherAttempt = () => {
-    setResponse('');
-    setStage('confidence');
+    setStage('attempt');
+    if (submittedAttempt && !response) {
+      setResponse(submittedAttempt.response);
+    }
     setSubmittedAttempt(null);
     setEvaluationResult(null);
     setEvaluationError(null);
     setIsEvaluating(false);
+  };
+
+  // Buildathon Pitch Demo Handlers
+  const handlePitchSetConfidenceAndStart = (conf: number) => {
+    setConfidenceBeforeAttempt(conf);
+    setStage('attempt');
+    if (challenge) {
+      const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      saveAttemptDraft(challenge.id, {
+        confidence_before_attempt: conf,
+        response,
+        stage: 'attempt',
+        lastSaved: now
+      });
+      setDraftSavedTimestamp(now);
+    }
+  };
+
+  const handlePitchFillAttempt = (text: string) => {
+    setResponse(text);
+    if (challenge) {
+      saveAttemptDraft(challenge.id, {
+        confidence_before_attempt: confidenceBeforeAttempt,
+        response: text,
+        stage: 'attempt',
+        lastSaved: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+    }
+  };
+
+  const handlePitchUnlockHintAndRetry = async () => {
+    if (hintState.current_tier === 0) {
+      await handleRequestHint(1);
+    }
+    handleRetryWithHints();
   };
 
   const confidenceOptions = [
@@ -633,6 +671,22 @@ export const ChallengePage: React.FC<ChallengePageProps> = ({
       {/* Main Challenge Content */}
       {!isLoading && challenge && (
         <div className="mt-6">
+          {/* BUILDATHON DEMO PITCH CONTROLLER */}
+          <PitchDemoBar
+            conceptId={concept.id}
+            conceptName={concept.name}
+            stage={stage}
+            confidence={confidenceBeforeAttempt}
+            response={response}
+            verdict={evaluationResult?.verdict || null}
+            hintTier={hintState.current_tier}
+            isEvaluating={isEvaluating}
+            onSetConfidenceAndStart={handlePitchSetConfidenceAndStart}
+            onFillAttempt={handlePitchFillAttempt}
+            onUnlockHintAndRetry={handlePitchUnlockHintAndRetry}
+            onGoToEvidence={() => onNavigate('evidence')}
+          />
+
           {/* STAGE 1: BEFORE THE CHALLENGE — CONFIDENCE ASSESSMENT */}
           {stage === 'confidence' && (
             <div className="space-y-6">

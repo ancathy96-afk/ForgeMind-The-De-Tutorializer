@@ -34,6 +34,15 @@ export interface Concept {
     penaltyDescription: string;
   }[];
 
+  // Pre-authored reference solution and evaluation criteria for Library concepts
+  referenceSolution?: string;
+  evaluationCriteria?: {
+    structuralMilestones: string[];
+    acceptableAlternatives: string[];
+    capabilityTested: string;
+  };
+  challenge?: GeneratedChallenge;
+
   // Step 7: User-Owned / BYO Material extensions
   sourceType?: ChallengeSourceType; // 'LIBRARY' | 'USER_GENERATED'
   isUserOwned?: boolean;

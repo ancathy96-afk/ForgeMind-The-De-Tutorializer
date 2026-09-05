@@ -1,4 +1,5 @@
 import { Concept, Domain } from '../types';
+import { CURATED_NOVEL_CHALLENGES } from './curatedNovelChallenges';
 
 export const INITIAL_CONCEPTS: Concept[] = [
   // ==========================================
@@ -9,64 +10,60 @@ export const INITIAL_CONCEPTS: Concept[] = [
     name: 'RICE Prioritization',
     domain: 'Product Management',
     description: 'A quantitative scoring model evaluating Reach, Impact, Confidence, and Effort to remove cognitive bias from roadmap decisions.',
-    underlyingSkill: 'Prioritizing competing initiatives using structured trade-offs.',
+    underlyingSkill: 'Prioritizing competing initiatives using structured trade-offs, normalizing divergent reach units, and correcting stakeholder confidence bias.',
     capabilities: [
       'identify competing options',
-      'reason about reach',
+      'reason about reach units (accounts vs sensor/volume exposure)',
       'reason about impact',
-      'account for confidence',
-      'consider effort',
+      'account for confidence and apply sales pipeline discounts',
+      'consider engineering capacity ceilings',
       'compare trade-offs',
-      'justify a recommendation'
+      'justify an un-gameable recommendation with sensitivity thresholds'
     ],
     reasoningMilestones: [
-      'Deconstruct raw stakeholder claims into quantifiable unit dimensions',
-      'Identify unit mismatches between enterprise prospective accounts and self-serve user cohorts',
-      'Penalize verbal sales pipeline sentiment using disciplined confidence discount factors',
-      'Establish a mathematical sensitivity threshold where the decision inverts'
+      'Recognize the unit mismatch: measuring accounts vs measuring sensors/revenue exposure across initiatives',
+      'Penalize the Sales Director\'s 100% confidence claim down to an empirical B2B verbal commitment range (typically 20%-50%)',
+      'Compute raw and adjusted RICE scores across all three initiatives under the 6 engineer-month capacity ceiling',
+      'Identify that Project Titan (520×2×0.8)/4 = 208, Project Bedrock (148×3×0.5)/3 = 74 (or on sensor basis (62%×3×0.5)/3), Project Apex raw (5×3×1.0)/2 = 7.5 (or ARR-weighted)',
+      'Formulate the capacity constraint packaging: Titan (4) + Apex (2) = 6, or Bedrock (3) + Apex (2) = 5'
     ],
     decisionPoints: [
-      'Choose whether to score at the account level vs individual end-user level',
+      'Choose whether to score at the account level vs deployed sensor volume / ARR exposure',
       'Determine whether to discount sales verbal confidence below 50%',
-      'Balance immediate short-term ARR against systemic retention risk'
+      'Balance enterprise renewal risk against mid-market contractor churn under strict 6 engineer-month capacity'
     ],
     acceptableAlternatives: [
-      'WSJF (Weighted Shortest Job First) framework with documented cost-of-delay mapping',
-      'Sensitivity-bounded RICE with confidence intervals rather than single-point estimates'
+      'Weighting Reach by sensor volume or annualized contract value rather than pure legal account count, provided the exact normalization factor is mathematically stated.',
+      'Accepting a higher confidence for Project Apex if paired with an explicit contractual penalty risk clause.'
     ],
     commonFailureModes: [
-      'Treating confidence as subjective optimism rather than an evidence discount factor',
-      'Multiplying multi-tenant enterprise accounts by individual active users inconsistently',
-      'Ignoring the denominator effect when effort estimates carry high technical variance'
+      'Treating 100% verbal sales optimism as empirical confidence rather than an uncommitted pipeline claim',
+      'Equating 5 enterprise conglomerates directly with 520 contractor accounts without unit normalization',
+      'Ignoring the 6 engineer-month hard capacity ceiling when recommending roadmaps'
     ],
     difficultyLevels: ['Foundational', 'Applied', 'Advanced'],
-    approximateDifficulty: 'Applied (Senior Practitioner)',
+    approximateDifficulty: 'Applied (Senior PM)',
     challengePreview: {
-      title: 'The Series B Roadmap Deadlock',
-      scenario: 'Your enterprise fintech startup has 6 weeks of runway before the Series B board meeting. The VP of Sales wants Feature A ("Custom Compliance Webhooks") claiming it will close two $200k ARR deals. The Head of Product wants Feature B ("Automated Reconciliation Engine") which affects 80% of current self-serve churners.',
-      contextData: 'Feature A: Reach = 2 enterprise prospects; Impact = 3 (massive); Confidence = 50% (verbal sales intent); Effort = 2 person-months.\nFeature B: Reach = 4,200 monthly active accounts; Impact = 1 (moderate); Confidence = 80% (churn exit survey data); Effort = 3 person-months.',
-      task: 'Compute the raw RICE scores, identify the mathematical vulnerability in Sales\'s confidence claim, and independently articulate your executive decision to the CEO without consulting textbook formulas.',
+      title: 'The Q3 Heavy Equipment Dispatch Dilemma',
+      scenario: 'You are the Lead Product Manager for BuildGrid, a B2B construction fleet telematics SaaS with 650 mid-sized contractor clients (average 40 telematics sensors per contractor) and 8 regional enterprise construction conglomerates (average 1,200 sensors per client). Your engineering sprint capacity for Q3 is capped at 6 engineer-months. The executive team is locked in conflict between three competing initiatives: Project Titan (Subcontractor Punch-List Mobile Sync), Project Bedrock (Predictive Hydraulic Telemetry Alerts), and Project Apex (Enterprise ERP Multi-Entity Billing).',
+      contextData: 'Initiative 1 (Titan): Reach 520 accounts, Impact 2, Confidence 80%, Effort 4 mo.\nInitiative 2 (Bedrock): Reach 148 accounts (62% of active sensors), Impact 3, Confidence 50%, Effort 3 mo.\nInitiative 3 (Apex): Reach 5 enterprise conglomerates ($1.2M ARR renewal), Impact 3, Sales Confidence 100%, Effort 2 mo.',
+      task: 'Conduct a quantitative RICE evaluation that resolves the unit-of-analysis mismatch between accounts vs sensor volume, discount the Sales Director\'s claim using disciplined B2B pipeline confidence metrics, and deliver your prioritized recommendation with an explicit sensitivity threshold for where your decision would flip.',
       constraints: [
-        'Do not use generic definitions or explain what RICE stands for.',
-        'Address the unit mismatch between enterprise prospective value and self-serve retention.',
-        'Explicitly state your sensitivity threshold where the decision flips.'
+        'Do not explain what the RICE acronym stands for or write introductory textbook definitions.',
+        'Explicitly state whether your Reach metric represents legal contractor accounts or deployed telematics sensors, and justify that choice mathematically.',
+        'Discount Initiative 3\'s 100% confidence claim to reflect realistic B2B sales pipeline discount rates (provide your selected percentage and defense).',
+        'Provide an executive trade-off justification showing which single initiative gets cut due to the 6 engineer-month capacity ceiling.'
       ],
-      expectedOutputFormat: 'Executive Decision Memo (RICE breakdown, vulnerability analysis, final call)'
+      expectedOutputFormat: 'Executive Prioritization Brief: 1) Normalized RICE Table; 2) Confidence Discount & Unit Rationale; 3) Capacity Cut Recommendation; 4) Inversion Sensitivity Threshold.'
     },
-    hints: [
-      {
-        tier: 1,
-        title: 'Formulation Check',
-        hint: 'Remember: RICE = (Reach × Impact × Confidence) / Effort. Pay special attention to how Reach is quantified for multi-tenant accounts vs individual users.',
-        penaltyDescription: '-10% on Raw Independence'
-      },
-      {
-        tier: 2,
-        title: 'Sensitivity Analysis',
-        hint: 'Examine what happens to Feature A\'s score if the verbal intent confidence drops from 50% to 20% (standard B2B sales pipeline discount).',
-        penaltyDescription: '-25% on Raw Independence'
-      }
-    ]
+    hints: CURATED_NOVEL_CHALLENGES['rice-prioritization'].hints,
+    referenceSolution: CURATED_NOVEL_CHALLENGES['rice-prioritization'].referenceSolution,
+    evaluationCriteria: {
+      structuralMilestones: CURATED_NOVEL_CHALLENGES['rice-prioritization'].structuralMilestones,
+      acceptableAlternatives: CURATED_NOVEL_CHALLENGES['rice-prioritization'].acceptableAlternativeReasoning,
+      capabilityTested: CURATED_NOVEL_CHALLENGES['rice-prioritization'].capabilityTested
+    },
+    challenge: CURATED_NOVEL_CHALLENGES['rice-prioritization']
   },
   {
     id: 'product-metrics',
@@ -494,29 +491,32 @@ export const INITIAL_CONCEPTS: Concept[] = [
   // ==========================================
   {
     id: 'sql-joins',
-    name: 'SQL JOINs',
+    name: 'SQL JOIN Logic',
     domain: 'SQL / Data',
     description: 'Relational algebra combining rows across tables: INNER, LEFT, RIGHT, FULL OUTER, CROSS JOIN, and relational cardinality preservation.',
-    underlyingSkill: 'Preserving correct row cardinality and aggregate calculations across one-to-many and many-to-many relational joins.',
+    underlyingSkill: 'Preserving relational cardinality and monetary precision across multiple one-to-many joins using pre-aggregation patterns.',
     capabilities: [
       'identify relational cardinality between joined entities',
       'diagnose and prevent Cartesian fan-out explosion',
-      'apply pre-aggregation patterns before joining',
-      'handle NULL values correctly in LEFT and FULL OUTER JOINs',
-      'write correlated or derived table queries to preserve financial metric sums'
+      'apply pre-aggregation patterns in CTEs before joining',
+      'handle NULL values correctly using COALESCE with outer joins',
+      'preserve absolute transactional cardinality and monetary precision without SELECT DISTINCT'
     ],
     reasoningMilestones: [
-      'Trace row duplication when joining multiple 1-to-many child tables to a single parent row',
-      'Isolate aggregate metrics into independent CTEs or subqueries before performing parent joins',
-      'Verify that resulting totals match source transactional truth'
+      'Identify that joining two or more independent 1-to-many child tables causes an M × N Cartesian product for each parent row',
+      'Reject `SUM(DISTINCT amount)` because multiple transactions with identical dollar values are silently dropped',
+      'Isolate child aggregations into separate CTEs or derived tables grouped by merchant_id before joining',
+      'Use COALESCE(..., 0) on aggregated metrics to handle parent rows with zero child records',
+      'Maintain query readability and performance without masking duplicate joins with SELECT DISTINCT'
     ],
     decisionPoints: [
-      'Choose between pre-aggregating in CTEs vs using window functions or correlated subqueries',
-      'Determine whether an INNER JOIN risks silently dropping valid zero-transaction parent rows'
+      'Choose between pre-aggregating in CTEs vs correlated subqueries vs window functions',
+      'Determine whether LEFT JOIN preserves parent row counts when joining multiple 1-to-many child tables',
+      'Select between COALESCE fallback values vs NULL retention in analytical aggregates'
     ],
     acceptableAlternatives: [
-      'UNION ALL staging pipeline with conditional grouping',
-      'LATERAL joins with correlated subquery aggregations'
+      'Using correlated subqueries in the SELECT clause if query volume is low, provided the O(N) execution trade-off is articulated.',
+      'Using UNION ALL staging table pattern to compute single-pass grouped aggregation.'
     ],
     commonFailureModes: [
       'Using `SELECT DISTINCT` to mask underlying Cartesian row multiplication',
@@ -526,23 +526,26 @@ export const INITIAL_CONCEPTS: Concept[] = [
     difficultyLevels: ['Foundational', 'Applied', 'Advanced'],
     approximateDifficulty: 'Applied (Data / Analytics Engineer)',
     challengePreview: {
-      title: 'The Quadrupled Revenue Incident',
-      scenario: 'An analyst joins `orders` to `order_items` and `order_discounts`. Because one order has 3 items and 2 discount coupons, the joined total revenue shows 6x the actual monetary transactions in executive reporting.',
-      task: 'Write a robust query that calculates the true order total, discount total, and item count without row duplication.',
+      title: 'The Phantom Multi-Currency Merchant Ledger Explosion',
+      scenario: 'You are the lead data engineer for a global payments gateway. The financial reconciliation pipeline is reporting an alarming $4.2M discrepancy between daily settlement batches and bank payout logs. The junior analyst wrote a query joining the `merchants` table to `transactions`, `refunds`, and `fee_surcharges`. Because high-volume merchants frequently have multiple transactions, multiple refunds, and multiple fee adjustments on the same business day, the query produced a Cartesian fan-out that multiplied ledger totals by up to 12x.',
+      contextData: 'TABLE SCHEMAS:\nmerchants (merchant_id PK, business_name, settlement_currency, status)\ntransactions (transaction_id PK, merchant_id FK, created_at, gross_amount, net_amount)\nrefunds (refund_id PK, merchant_id FK, created_at, refunded_amount, reason)\nfee_surcharges (surcharge_id PK, merchant_id FK, created_at, fee_type, fee_amount)',
+      task: 'Deconstruct why the current join topology triggers row duplication, write a robust production-grade SQL query that preserves absolute transactional cardinality and monetary precision, and explain why naive fixes like SELECT DISTINCT fail at scale.',
       constraints: [
-        'Avoid `SELECT DISTINCT` band-aids that mask underlying join mechanics.',
-        'Demonstrate proper pre-aggregation or correlated subqueries.'
+        'Do not use SELECT DISTINCT inside aggregate functions (e.g. SUM(DISTINCT ...)), as identical legitimate dollar values will be silently discarded.',
+        'Must produce all three metrics (total_gross, total_refunded, total_fees) in a single consolidated result set.',
+        'Must handle merchants with transactions but zero refunds or zero surcharges without dropping them (proper NULL coalescing).',
+        'Explain the computational difference between pre-aggregating in Common Table Expressions (CTEs) vs correlated subqueries.'
       ],
-      expectedOutputFormat: 'Production SQL Query with Explanation'
+      expectedOutputFormat: '1) Diagnostic of Fan-out Mechanics; 2) Validated Production SQL Query; 3) Performance & Edge-case Defense.'
     },
-    hints: [
-      {
-        tier: 1,
-        title: 'Pre-aggregation Pattern',
-        hint: 'Aggregate `order_items` and `order_discounts` separately by `order_id` in CTEs or derived subqueries before joining back to `orders`.',
-        penaltyDescription: '-10% on Raw Independence'
-      }
-    ]
+    hints: CURATED_NOVEL_CHALLENGES['sql-joins'].hints,
+    referenceSolution: CURATED_NOVEL_CHALLENGES['sql-joins'].referenceSolution,
+    evaluationCriteria: {
+      structuralMilestones: CURATED_NOVEL_CHALLENGES['sql-joins'].structuralMilestones,
+      acceptableAlternatives: CURATED_NOVEL_CHALLENGES['sql-joins'].acceptableAlternativeReasoning,
+      capabilityTested: CURATED_NOVEL_CHALLENGES['sql-joins'].capabilityTested
+    },
+    challenge: CURATED_NOVEL_CHALLENGES['sql-joins']
   },
   {
     id: 'group-by',
@@ -744,5 +747,6 @@ export function getConceptById(id: string): Concept | undefined {
       // ignore
     }
   }
-  return INITIAL_CONCEPTS.find((c) => c.id === id);
+  const normalizedId = id === 'sql-join-logic' ? 'sql-joins' : id;
+  return INITIAL_CONCEPTS.find((c) => c.id === normalizedId || (normalizedId === 'sql-joins' && c.id === 'sql-joins'));
 }

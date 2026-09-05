@@ -322,6 +322,12 @@ Assembly: Format chunks with clear provenance headers. Place the most recent ame
   }
 };
 
+// Ensure sql-join-logic alias resolves to sql-joins
+CURATED_NOVEL_CHALLENGES['sql-join-logic'] = CURATED_NOVEL_CHALLENGES['sql-joins'];
+
 export function getCuratedNovelChallenge(conceptId: string): GeneratedChallenge | undefined {
+  if (conceptId === 'sql-join-logic' || conceptId === 'sql-joins') {
+    return CURATED_NOVEL_CHALLENGES['sql-joins'];
+  }
   return CURATED_NOVEL_CHALLENGES[conceptId];
 }

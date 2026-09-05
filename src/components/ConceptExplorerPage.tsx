@@ -127,7 +127,7 @@ export const ConceptExplorerPage: React.FC<ConceptExplorerPageProps> = ({ onSele
                   <div>
                     {/* Top Row: Domain Tag & Difficulty */}
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-1.5">
+                      <div className="flex flex-wrap items-center gap-1.5">
                         <span
                           className={`rounded px-2 py-0.5 text-[11px] font-mono font-medium tracking-wide uppercase ${
                             concept.domain === 'Product Management'
@@ -139,6 +139,21 @@ export const ConceptExplorerPage: React.FC<ConceptExplorerPageProps> = ({ onSele
                         >
                           {concept.domain}
                         </span>
+                        {concept.id === 'rice-prioritization' && (
+                          <span className="rounded bg-amber-400/20 border border-amber-400/40 text-amber-200 px-1.5 py-0.5 text-[10px] font-mono font-bold">
+                            ⭐ Pitch Flow
+                          </span>
+                        )}
+                        {concept.id === 'sql-joins' && (
+                          <span className="rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 px-1.5 py-0.5 text-[10px] font-mono font-bold">
+                            Audited Concept
+                          </span>
+                        )}
+                        {concept.challenge && (
+                          <span className="rounded bg-zinc-800 border border-zinc-700 text-zinc-300 px-1.5 py-0.5 text-[10px] font-mono">
+                            Stored Challenge
+                          </span>
+                        )}
                         {concept.sourceType === 'USER_GENERATED' && (
                           <span className="rounded bg-amber-500/15 border border-amber-500/30 text-amber-300 px-1.5 py-0.5 text-[10px] font-mono font-semibold">
                             BYO Material

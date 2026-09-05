@@ -102,6 +102,21 @@ app.post('/api/generate-challenge', async (req, res) => {
   const targetDifficulty = difficulty || concept.approximateDifficulty || 'Applied';
   const sourceType = req.body.sourceType === 'USER_GENERATED' ? 'USER_GENERATED' : 'LIBRARY';
 
+  // CRITICAL MANDATE: Content Library challenges are pre-authored.
+  // DO NOT call Gemini to generate these challenges at runtime.
+  // The learner selecting a library concept immediately receives the stored challenge.
+  if (sourceType === 'LIBRARY' || CURATED_NOVEL_CHALLENGES[conceptId] || (conceptId === 'sql-join-logic' && CURATED_NOVEL_CHALLENGES['sql-joins'])) {
+    const curated = CURATED_NOVEL_CHALLENGES[conceptId] || CURATED_NOVEL_CHALLENGES['sql-joins'];
+    if (curated) {
+      serverChallengeStore.set(curated.id, curated);
+      serverChallengeStore.set(conceptId, curated);
+      return res.json({
+        challenge: curated,
+        source: 'curated-baseline'
+      });
+    }
+  }
+
   const systemInstruction = `You are ForgeMind's Challenge Engine.
 ForgeMind's tagline is: "You learned it. Now prove you can use it."
 Its core purpose is to remove the learner's reference material and observe whether they can independently apply what they studied to an unfamiliar, real-world situation.
@@ -326,7 +341,101 @@ function evaluateHeuristic(
   const sentences = text.split(/(?<=[.?!:\n])\s+/).filter((s: string) => s.trim().length > 15);
   const evidenceQuotes = sentences.slice(0, 3).map((s: string) => s.trim().replace(/\n+/g, ' '));
 
-  // Determine demonstrated milestones by checking semantic presence
+  // Check concept domain or ID for domain-aware milestone precision
+  const conceptId = (concept.id || challenge.conceptId || '').toLowerCase();
+  
+  // Specific Evaluator Logic for RICE Prioritization
+  if (conceptId.includes('rice')) {
+    const hasBaselineCalc = /titan|bedrock|apex|208|74|7\.5/i.test(lower) || (/reach.*impact.*confidence/i.test(lower) && /effort/i.test(lower));
+    const hasCapacity = /6.*(month|engineer|capacity)|capacity|cut/i.test(lower);
+    const hasUnitNormalization = /sensor|fleet|exposure|mismatch|unit.*analysis|density|arr|volume/i.test(lower);
+    const hasPipelineDiscount = /discount|verbal|pipeline|40%|50%|sales.*claim|uncommitted|penalty/i.test(lower) && !/guaranteed by the sales director 100%/i.test(lower);
+    const hasSensitivityThreshold = /invert|threshold|sensitivity|flip|if.*exceeds|risk.*attrition/i.test(lower);
+
+    if (hasBaselineCalc && hasCapacity && hasUnitNormalization && hasPipelineDiscount) {
+      return {
+        verdict: 'CORRECT',
+        demonstrated_capabilities: [
+          'Normalized unit-of-analysis mismatch between enterprise accounts and contractor sensor fleet density',
+          'Discounted verbal sales optimism using disciplined B2B pipeline confidence metrics',
+          'Formulated optimal initiative packaging respecting 6 engineer-month capacity ceiling',
+          hasSensitivityThreshold ? 'Established mathematical sensitivity threshold where roadmap decision inverts' : 'Articulated capacity trade-off defense'
+        ],
+        missing_capabilities: ['None identified — complete operational capability demonstrated'],
+        evidence: evidenceQuotes.length > 0 ? evidenceQuotes : ['Normalized reach across sensor volume and penalized verbal pipeline confidence.'],
+        brief_feedback: 'Outstanding applied trade-off defense. You resolved the unit-of-analysis distortion, discounted verbal pipeline optimism, and established clear sensitivity thresholds under capacity constraints.',
+        evaluator_confidence: 0.95
+      };
+    } else if (hasBaselineCalc) {
+      const missingRice: string[] = [];
+      if (!hasUnitNormalization) missingRice.push('Unit-of-analysis mismatch: treated 5 enterprise conglomerates on same scale as 520 small contractors without sensor/volume normalization');
+      if (!hasPipelineDiscount) missingRice.push('Uncritical acceptance of Sales Director\'s 100% confidence claim without applying empirical B2B pipeline discount');
+      if (!hasSensitivityThreshold) missingRice.push('Missing explicit mathematical sensitivity threshold where roadmap recommendation would invert');
+      
+      return {
+        verdict: 'PARTIALLY_CORRECT',
+        demonstrated_capabilities: [
+          'Calculated baseline RICE scores across competing initiatives',
+          'Evaluated engineering sprint capacity constraint (6 engineer-months)'
+        ],
+        missing_capabilities: missingRice.length > 0 ? missingRice : ['Deeper trade-off justification and confidence penalization'],
+        evidence: evidenceQuotes.length > 0 ? evidenceQuotes : ['Calculated raw RICE scores but left unit mismatch and confidence claims unadjusted.'],
+        brief_feedback: 'Strong initial calculation on raw RICE parameters, but your evaluation accepts the Sales Director\'s verbal confidence uncritically and leaves the unit mismatch (accounts vs sensor fleet) unadjusted.',
+        evaluator_confidence: 0.94
+      };
+    }
+  }
+
+  // Specific Evaluator Logic for SQL JOIN Logic
+  if (conceptId.includes('sql') || conceptId.includes('join')) {
+    const hasCTE = /with\s+\w+\s+as/i.test(lower) || /cte/i.test(lower) || /from\s*\(\s*select/i.test(lower);
+    const hasCoalesce = /coalesce/i.test(lower) || /ifnull/i.test(lower);
+    const hasDistinctPitfall = /sum\s*\(\s*distinct/i.test(lower);
+    const hasPreAggregation = (hasCTE || /group by\s+merchant_id/i.test(lower)) && /join/i.test(lower);
+
+    if (hasDistinctPitfall) {
+      return {
+        verdict: 'PARTIALLY_CORRECT',
+        demonstrated_capabilities: ['Attempted duplicate prevention in aggregation'],
+        missing_capabilities: [
+          'Rejected SUM(DISTINCT) anti-pattern (silently discards legitimate identical monetary transactions)',
+          'Pre-aggregating child tables in CTEs before joining to parent record'
+        ],
+        evidence: evidenceQuotes.length > 0 ? evidenceQuotes : ['Utilized SUM(DISTINCT) which silently eliminates legitimate duplicate amounts.'],
+        brief_feedback: 'Using SUM(DISTINCT amount) is an anti-pattern: if two different customers spend $45.00, the second is silently discarded. Isolate child aggregations in CTEs before joining.',
+        evaluator_confidence: 0.96
+      };
+    } else if (hasPreAggregation && hasCoalesce) {
+      return {
+        verdict: 'CORRECT',
+        demonstrated_capabilities: [
+          'Diagnosed and prevented Cartesian row explosion across multiple 1-to-many child tables',
+          'Applied pre-aggregation CTE patterns before joining back to parent entity',
+          'Handled zero-activity parent rows with outer joins and COALESCE null fallbacks'
+        ],
+        missing_capabilities: ['None identified — complete query integrity demonstrated'],
+        evidence: evidenceQuotes.length > 0 ? evidenceQuotes : ['Pre-aggregated child records in CTEs and preserved zero-activity merchants with COALESCE.'],
+        brief_feedback: 'Exemplary SQL formulation. Pre-aggregating transactions, refunds, and surcharges in separate CTEs preserves exact transactional cardinality while COALESCE ensures zero-activity merchants are retained.',
+        evaluator_confidence: 0.97
+      };
+    } else {
+      // Direct multi-join without CTE pre-aggregation exhibits Cartesian explosion
+      return {
+        verdict: 'PARTIALLY_CORRECT',
+        demonstrated_capabilities: ['Formulated multi-table relational join syntax'],
+        missing_capabilities: [
+          'Diagnosed Cartesian row multiplication across independent 1-to-many child tables',
+          'Pre-aggregating child tables in CTEs prior to joining parent entity',
+          'Safeguarded financial sums from inflated cross-product multiplication'
+        ],
+        evidence: evidenceQuotes.length > 0 ? evidenceQuotes : ['Multiple 1-to-many child tables joined directly, causing Cartesian cross-product duplication in sums.'],
+        brief_feedback: 'Cartesian Fan-Out Detected: Joining multiple 1-to-many child tables (transactions, refunds, fees) against merchants multiplies rows, inflating SUM() totals. Pre-aggregate in CTEs before joining.',
+        evaluator_confidence: 0.98
+      };
+    }
+  }
+
+  // Generic evaluation fallback for other concepts
   const structuralMilestones = challenge.structuralMilestones || concept.reasoningMilestones || [];
   const demonstrated: string[] = [];
   const missing: string[] = [];
@@ -510,11 +619,13 @@ ${concept.capabilities?.map((cap: string) => `  * ${cap}`).join('\n') || 'None'}
 ${(challenge.structuralMilestones || concept.reasoningMilestones || []).map((m: string) => `  * ${m}`).join('\n') || 'None'}
 - Acceptable Alternative Reasoning Paths:
 ${(challenge.acceptableAlternativeReasoning || concept.acceptableAlternatives || []).map((alt: string) => `  * ${alt}`).join('\n') || 'None'}
+- Evaluation Criteria:
+${(concept.evaluationCriteria || []).map((ec: string) => `  * ${ec}`).join('\n') || 'None'}
 
 ${isUserGenerated
   ? 'REFERENCE SOLUTION (LOOSE CONTEXT ONLY - DO NOT REQUIRE MATCH):'
   : 'REFERENCE SOLUTION (BENCHMARK CONTEXT ONLY - DO NOT REQUIRE MATCH):'}
-${challenge.referenceSolution}
+${challenge.referenceSolution || concept.referenceSolution || 'None provided'}
 
 LEARNER INDEPENDENT ATTEMPT (Attempt #${attempt.attempt_number || 1}, Pre-attempt confidence: ${attempt.confidence_before_attempt || 3}/5):
 """

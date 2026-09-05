@@ -50,13 +50,20 @@ export const ConceptPreviewPage: React.FC<ConceptPreviewPageProps> = ({
       <div className="mt-8 rounded-2xl border border-zinc-800/90 bg-zinc-900/60 p-6 shadow-2xl backdrop-blur-sm sm:p-10">
         {/* Domain Badge & Status */}
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <span
-            className={`rounded-md border px-2.5 py-1 text-xs font-mono font-medium uppercase tracking-wider ${
-              domainColors[concept.domain] || 'border-zinc-700 bg-zinc-800 text-zinc-300'
-            }`}
-          >
-            {concept.domain}
-          </span>
+          <div className="flex items-center space-x-2">
+            <span
+              className={`rounded-md border px-2.5 py-1 text-xs font-mono font-medium uppercase tracking-wider ${
+                domainColors[concept.domain] || 'border-zinc-700 bg-zinc-800 text-zinc-300'
+              }`}
+            >
+              {concept.domain}
+            </span>
+            {concept.challenge && (
+              <span className="rounded-md border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-xs font-mono font-semibold text-amber-300">
+                Pre-Authored Challenge
+              </span>
+            )}
+          </div>
 
           <div className="inline-flex items-center space-x-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-3 py-1 text-xs font-medium text-emerald-300">
             <Lock className="h-3 w-3" />
