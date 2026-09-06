@@ -1,20 +1,72 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# ForgeMind — The De-Tutorializer
 
-# Run and deploy your AI Studio app
+> **You just learned it. Now prove you can use it.**
 
-This contains everything you need to run your app locally.
+ForgeMind is an AI-powered application practice engine designed to expose the gap between **understanding something while learning it** and **being able to apply it independently in a new situation**.
 
-View your app in AI Studio: https://ai.studio/apps/f1865d1e-f8d6-4115-a909-c078246e7925
+Instead of giving learners another explanation, quiz, or tutorial, ForgeMind removes the original example and creates a **novel challenge** based on what they studied.
 
-## Run Locally
+The learner must attempt the challenge independently. ForgeMind then evaluates the attempt against the underlying capabilities required to solve the problem and provides progressive scaffolding only when needed.
 
-**Prerequisites:**  Node.js
+---
 
+## The Problem
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Modern digital learning makes it extremely easy to consume information:
+
+- Tutorials
+- YouTube videos
+- PDFs
+- Courses
+- Cohort programs
+- Documentation
+- AI explanations
+
+But consuming learning content can create a misleading feeling of competence.
+
+A learner may recognize an explanation and think:
+
+> "I understand this."
+
+But when the tutorial disappears and they face a new problem:
+
+> "I don't know where to start."
+
+This is especially visible when people move from:
+
+**learning → interviews → projects → real work**
+
+ForgeMind focuses on this **Consumption → Application gap**.
+
+---
+
+## The Core Insight
+
+Learning content often makes answers **recognizable**.
+
+ForgeMind removes that scaffolding and asks the learner to **produce the answer themselves**.
+
+```text
+STUDY
+  ↓
+"I understand it"
+  ↓
+FORGEMIND
+  ↓
+NEW / UNSEEN TASK
+  ↓
+"Do it yourself"
+  ↓
+ATTEMPT
+  ↓
+EVALUATION
+  ↓
+┌───────────────────────────┐
+│ What can you actually do? │
+└───────────────────────────┘
+  ↓
+Scaffold only when necessary
+  ↓
+Retry
+  ↓
+Evidence of capability
